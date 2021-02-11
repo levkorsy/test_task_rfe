@@ -8,58 +8,59 @@
     <ul class="list-group">
       <ListHashItem v-for="(hashItem, index) in listItems" :item="hashItem" :key="index" @removeItem="removeItem"/>
     </ul>
-
   </div>
-
 </template>
 
 <script>
 
 import ListHashItem from "./components/ListHashItem";
-
 export default {
   name: 'App',
-
   mounted() {
+    // Simulates default hash
     window.location.hash = `${this.hashTitle}=red,blue,purple`
+    //Separates hash to array of items
     this.getListItemsFromHash(window.location.hash)
   },
   data() {
     return {
       listItems: [],
-      route: window.location.hash,
       hash: '',
       hashTitle: '#tags'
-
     }
   },
   components: {ListHashItem},
   methods: {
+    // Function adds item to itemList. Gets string.
     addToHash(hash) {
+      // Check if string is not empty
       if (hash.length > 0) {
+        // Add item to array
         this.listItems.push(hash)
+        //Update hash
         window.location.hash = `${this.hashTitle}=${this.listItems.join(',')}`
-        this.hash =''
+        // Empty input value
+        this.hash = ''
       }
     },
+    //Function separates hash to array of items. Gets string
     getListItemsFromHash(hash) {
+      //Convert hash string to object
       let hashArray = hash
           .split("&")
           .map(v => v.split("="))
           .reduce((pre, [key, value]) => ({...pre, [key]: value}), {})
+      //Convert value of "hash" key in object to array
       this.listItems = hashArray[this.hashTitle].split(",");
     },
-    removeItem(item){
-      this.listItems = this.listItems.filter(listItem=> item !== listItem)
+    // Function removes item from itemList. Gets string
+    removeItem(item) {
+      // Iterate through array and return array without item
+      this.listItems = this.listItems.filter(listItem => item !== listItem)
+      //Update hash
       window.location.hash = `${this.hashTitle}=${this.listItems.join(',')}`
     }
   },
-
-  watch: {
-    route: function () {
-      console.log(window.location.hash.split("#/")[1])
-    }
-  }
 }
 </script>
 
